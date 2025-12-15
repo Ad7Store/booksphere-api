@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookSphere - Digital Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            color: white;
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: #FFD700;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #FFD700;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+        }
+
+        .auth-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .auth-section.active {
+            display: block;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -2px;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .books-section {
+            display: none;
+            padding: 40px 0;
+        }
+
+        .books-section.active {
+            display: block;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .book-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 30px auto;
+            border: 5px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .book-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .book-info {
+            padding: 0 20px 20px;
+        }
+
+        .book-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .book-author {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .book-desc {
+            color: #777;
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .read-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .read-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .reader-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            padding: 40px;
+        }
+
+        .reader-modal.active {
+            display: block;
+        }
+
+        .reader-content {
+            background: white;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            border-radius: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-reader {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 2em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                BookSphere
+            </div>
+            <nav>
+                <a href="#" id="homeLink">Home</a>
+                <a href="#" id="booksLink">Books</a>
+                <a href="#" id="loginLink">Login</a>
+                <a href="#" id="signupLink">Sign Up</a>
+                <a href="#" id="logoutLink" style="display:none;">Logout</a>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>Discover Your Next Adventure</h1>
+            <p>Immerse yourself in our collection of handpicked books. Login to start your reading journey!</p>
+        </section>
+
+        <!-- Auth Section -->
+        <section class="auth-section" id="authSection">
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">Login</div>
+                <div class="auth-tab" data-tab="signup">Sign Up</div>
+            </div>
+
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+
+            <form id="signupForm" class="auth-form">
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <button type="submit" class="btn">Sign Up</button>
+            </form>
+        </section>
+
+        <!-- Books Section -->
+        <section class="books-section" id="booksSection">
+            <h2 style="color: white; text-align: center; font-size: 2.5em; margin-bottom: 30px;">Featured Books</h2>
+            <div class="books-grid" id="booksGrid">
+                <!-- Books will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Reader Modal -->
+        <div class="reader-modal" id="readerModal">
+            <div class="close-reader" id="closeReader">&times;</div>
+            <div class="reader-content" id="readerContent">
+                <!-- Book content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class BookApp {
+            constructor() {
+                this.token = localStorage.getItem('token');
+                this.user = JSON.parse(localStorage.getItem('user') || 'null');
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.checkAuth();
+            }
+
+            bindEvents() {
+                // Navigation
+                document.getElementById('loginLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showAuth('login');
+                });
+
+                document.getElementById('signupLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showAuth('signup');
+                });
+
+                document.getElementById('logoutLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.logout();
+                });
+
+                document.getElementById('booksLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showBooks();
+                });
+
+                document.getElementById('homeLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showHome();
+                });
+
+                // Auth tabs
+                document.querySelectorAll('.auth-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabName = tab.dataset.tab;
+                        this.switchAuthTab(tabName);
+                    });
+                });
+
+                // Forms
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.login();
+                });
+
+                document.getElementById('signupForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.signup();
+                });
+
+                // Reader modal
+                document.getElementById('closeReader').addEventListener('click', () => {
+                    document.getElementById('readerModal').classList.remove('active');
+                });
+            }
+
+            showAuth(tab = 'login') {
+                document.getElementById('authSection').classList.add('active');
+                document.getElementById('booksSection').classList.remove('active');
+                this.switchAuthTab(tab);
+            }
+
+            showBooks() {
+                if (!this.token) {
+                    this.showAuth();
+                    return;
+                }
+                document.getElementById('authSection').classList.remove('active');
+                document.getElementById('booksSection').classList.add('active');
+                this.loadBooks();
+            }
+
+            showHome() {
+                document.getElementById('authSection').classList.remove('active');
+                document.getElementById('booksSection').classList.remove('active');
+            }
+
+            switchAuthTab(tabName) {
+                document.querySelectorAll('.auth-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.tab === tabName);
+                });
+
+                document.querySelectorAll('.auth-form').forEach(form => {
+                    form.classList.toggle('active', form.id === `${tabName}Form`);
+                });
+            }
+
+            async login() {
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        this.token = data.token;
+                        this.user = data.user;
+                        localStorage.setItem('token', this.token);
+                        localStorage.setItem('user', JSON.stringify(this.user));
+                        this.checkAuth();
+                        this.showBooks();
+                    } else {
+                        alert(data.error || 'Login failed');
+                    }
+                } catch (error) {
+                    alert('Login failed: ' + error.message);
+                }
+            }
+
+            async signup() {
+                const email = document.getElementById('signupEmail').value;
+                const password = document.getElementById('signupPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/auth/signup', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        this.token = data.token;
+                        this.user = data.user;
+                        localStorage.setItem('token', this.token);
+                        localStorage.setItem('user', JSON.stringify(this.user));
+                        this.checkAuth();
+                        this.showBooks();
+                    } else {
+                        alert(data.error || 'Signup failed');
+                    }
+                } catch (error) {
+                    alert('Signup failed: ' + error.message);
+                }
+            }
+
+            logout() {
+                this.token = null;
+                this.user = null;
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                this.checkAuth();
+                this.showHome();
+            }
+
+            checkAuth() {
+                const loginLink = document.getElementById('loginLink');
+                const signupLink = document.getElementById('signupLink');
+                const logoutLink = document.getElementById('logoutLink');
+                const booksLink = document.getElementById('booksLink');
+
+                if (this.token && this.user) {
+                    loginLink.style.display = 'none';
+                    signupLink.style.display = 'none';
+                    logoutLink.style.display = 'block';
+                    booksLink.style.display = 'block';
+                } else {
+                    loginLink.style.display = 'block';
+                    signupLink.style.display = 'block';
+                    logoutLink.style.display = 'none';
+                    booksLink.style.display = 'block';
+                }
+            }
+
+            async loadBooks() {
+                try {
+                    const response = await fetch('/api/books');
+                    const books = await response.json();
+                    this.renderBooks(books);
+                } catch (error) {
+                    console.error('Failed to load books:', error);
+                }
+            }
+
+            renderBooks(books) {
+                const grid = document.getElementById('booksGrid');
+                grid.innerHTML = '';
+
+                books.forEach(book => {
+                    const card = document.createElement('div');
+                    card.className = 'book-card';
+                    card.innerHTML = `
+                        <div class="book-image">
+                            <img src="${book.image}" alt="${book.title}">
+                        </div>
+                        <div class="book-info">
+                            <h3 class="book-title">${book.title}</h3>
+                            <p class="book-author">by ${book.author}</p>
+                            <p class="book-desc">${book.description}</p>
+                            <button class="read-btn" onclick="app.openBook('${book.id}')">
+                                <i class="fas fa-book-reader"></i> Read Now
+                            </button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+
+            async openBook(bookId) {
+                try {
+                    const response = await fetch(`/api/books/${bookId}`);
+                    const book = await response.json();
+
+                    document.getElementById('readerContent').innerHTML = `
+                        <h2>${book.title}</h2>
+                        <p><em>by ${book.author}</em></p>
+                        <hr>
+                        <div style="margin-top: 20px;">
+                            ${book.content || 'No content available.'}
+                        </div>
+                    `;
+                    document.getElementById('readerModal').classList.add('active');
+                } catch (error) {
+                    alert('Failed to load book content');
+                }
+            }
+        }
+
+        // Initialize app
+        const app = new BookApp();
+    </script>
+</body>
+</html>

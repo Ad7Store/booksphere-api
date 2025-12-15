@@ -1,0 +1,16 @@
+{
+  "functions": {
+    "api/*.js": {
+      "runtime": "edge"
+    }
+  },
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/admin", "dest": "/admin/index.html" },
+    { "src": "/(.*)", "dest": "/public/$1" }
+  ],
+  "env": {
+    "JWT_SECRET": "your-secret-key-change-in-production",
+    "ADMIN_EMAIL": "admin@bookstore.com"
+  }
+}
